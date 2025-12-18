@@ -21,7 +21,7 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: "Qertex | Engineering the Intelligence of Tomorrow",
-  description: "A Global IT Leader bridging Canada, Jordan, and the UAE.",
+  description: "A Global IT Leader bridging Bahrain, Jordan, and the UAE.",
 };
 
 export default function RootLayout({
