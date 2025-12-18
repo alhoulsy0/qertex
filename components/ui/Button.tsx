@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps, useSpring, useTransform } from "framer-motion";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -14,10 +14,6 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     size?: "sm" | "md" | "lg";
 }
 
-// Omit the onDrag props from motion to avoid conflicts if needed, or simply don't pass specialized drag handlers that conflict 
-// The error was mostly about spreading ButtonProps into motion.button where onDrag types might clash.
-// We can use a typed component.
-
 export const Button = ({
     className,
     variant = "primary",
@@ -25,19 +21,37 @@ export const Button = ({
     children,
     ...props
 }: ButtonProps) => {
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [opacity, setOpacity] = useState(0);
     const btnRef = useRef<HTMLButtonElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
+
+    // Magnetic Springs
+    const x = useSpring(0, { stiffness: 150, damping: 15 });
+    const y = useSpring(0, { stiffness: 150, damping: 15 });
+
+    // Internal text motion - moves slightly less for depth
+    const textX = useTransform(x, (current) => current * 0.2);
+    const textY = useTransform(y, (current) => current * 0.2);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!btnRef.current) return;
         const rect = btnRef.current.getBoundingClientRect();
-        setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        setOpacity(1);
+
+        // Calculate distance from center
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distanceX = e.clientX - centerX;
+        const distanceY = e.clientY - centerY;
+
+        // Pull button towards cursor
+        x.set(distanceX * 0.3);
+        y.set(distanceY * 0.3);
     };
 
     const handleMouseLeave = () => {
-        setOpacity(0);
+        setIsHovered(false);
+        x.set(0);
+        y.set(0);
     };
 
     const variants = {
@@ -49,9 +63,9 @@ export const Button = ({
     };
 
     const sizes = {
-        sm: "px-4 py-2 text-sm",
-        md: "px-6 py-3 text-base",
-        lg: "px-8 py-4 text-lg",
+        sm: "px-5 py-2 text-sm",
+        md: "px-7 py-3 text-base",
+        lg: "px-9 py-4 text-lg",
     };
 
     return (
@@ -59,25 +73,29 @@ export const Button = ({
             ref={btnRef}
             whileTap={{ scale: 0.95 }}
             onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={handleMouseLeave}
+            style={{ x, y }}
             className={cn(
-                "relative rounded-full font-medium transition-all duration-300 overflow-hidden flex items-center justify-center gap-2",
+                "relative rounded-full font-medium transition-colors duration-300 flex items-center justify-center gap-2",
                 variants[variant],
                 sizes[size],
                 className
             )}
             {...(props as HTMLMotionProps<"button">)}
         >
-            <span className="relative z-10">{children}</span>
+            {/* Text Content Layer */}
+            <motion.span
+                className="relative z-10 flex items-center gap-2 font-[family-name:var(--font-sora)]"
+                style={{ x: textX, y: textY }}
+            >
+                {children}
+            </motion.span>
 
-            {/* Shimmer Effect */}
+            {/* Shimmer/Glow on Hover */}
             {variant === "primary" && (
-                <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    animate={{
-                        background: `radial-gradient(150px circle at ${position.x}px ${position.y}px, rgba(255,255,255,0.3), transparent 80%)`,
-                    }}
-                    style={{ opacity }}
+                <div
+                    className={`absolute inset-0 rounded-full transition-opacity duration-500 bg-white/20 blur-md ${isHovered ? "opacity-30" : "opacity-0"}`}
                 />
             )}
         </motion.button>

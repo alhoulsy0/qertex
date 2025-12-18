@@ -2,15 +2,16 @@
 
 import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+
+import { BackgroundMesh } from "../ui/BackgroundMesh";
 
 export function Hero() {
+    const { t } = useLanguage();
     return (
         <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
             {/* Background Decor */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-cobalt)]/10 rounded-full blur-3xl animate-[pulse_8s_ease-in-out_infinite]" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--color-mint)]/10 rounded-full blur-3xl animate-[pulse_10s_ease-in-out_infinite_reverse]" />
-            </div>
+            <BackgroundMesh />
 
             <div className="container mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
                 {/* Text Content */}
@@ -21,20 +22,31 @@ export function Hero() {
                     className="space-y-8"
                 >
                     <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
-                        Engineering the <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-cobalt)] to-[var(--color-mint)]">
-                            Intelligence
-                        </span>{" "}
-                        of Tomorrow.
+                        {/* Split title logic or just use full string? 
+                            The design has "Future" colored. 
+                            Let's keep it simple for i18n or use Trans equivalent. 
+                            For now, since we have simple keys, I'll assume the title key includes the coloring logic? 
+                            No, string only. I'll split it or just render the whole string. 
+                            Actually, the user request specific English text "Architecting the Future of Digital Trust". 
+                            I'll use the translation key and maybe simplistic rendering for now as complex interpolation isn't in my simple provider.
+                            Wait, I can wrap the "Future" word if I split the key or just use the whole string and lose the color effect for other langs?
+                            Let's try to keep the color effect by splitting manually for English, but for Arabic just show full text?
+                            Actually, I'll just use the t('hero_title') and maybe lose the specific span color for simplicity unless I upgrade i18n.
+                            The user wants "high-end", let's leave the span for English hardcoded? No, that breaks AR.
+                            I will just use the translation key for the whole h1.
+                        */}
+                        {t("hero_title")}
                     </h1>
 
                     <p className="text-xl text-slate-600 max-w-lg leading-relaxed">
-                        A Tri-Continental Powerhouse. From the tech hubs of Canada and Jordan to the innovation peaks of the UAE.
+                        {t("hero_subtitle")}
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                        <Button size="lg">Start Your Journey</Button>
-                        <Button size="lg" variant="secondary">Explore Solutions</Button>
+                        <a href="mailto:info@qertex.com">
+                            <Button size="lg">{t("hero_cta")}</Button>
+                        </a>
+                        <Button size="lg" variant="secondary">{t("hero_secondary_cta")}</Button>
                     </div>
                 </motion.div>
 

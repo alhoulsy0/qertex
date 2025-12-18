@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Sora } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -10,6 +11,12 @@ const inter = Inter({
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+});
+
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -25,9 +32,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${outfit.variable} antialiased bg-white text-slate-900 overflow-x-hidden`}
+        className={`${inter.variable} ${outfit.variable} ${sora.variable} antialiased bg-white text-slate-900 overflow-x-hidden`}
       >
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

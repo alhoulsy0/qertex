@@ -1,8 +1,11 @@
 import { NavBar } from "@/components/ui/NavBar";
 import { Hero } from "@/components/sections/Hero";
 import { ServiceQuadrant } from "@/components/sections/ServiceQuadrant";
-import { TriBridge } from "@/components/sections/TriBridge";
+import { InnovationHub } from "@/components/sections/InnovationHub";
+import { Academy } from "@/components/sections/Academy";
+import { PortfolioGrid } from "@/components/sections/PortfolioGrid";
 import { Footer } from "@/components/sections/Footer";
+import { Chatbot } from "@/components/ui/Chatbot";
 
 export default function Home() {
   return (
@@ -10,8 +13,11 @@ export default function Home() {
       <NavBar />
       <Hero />
       <ServiceQuadrant />
-      <TriBridge />
+      <InnovationHub />
+      <Academy />
+      <PortfolioGrid />
       <Footer />
+      <Chatbot />
     </main>
   );
 }
